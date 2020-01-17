@@ -1,0 +1,42 @@
+"options":
+  "producer_config":
+    "default": ""
+    "type": "string"
+    "description": |-
+      Base 64 encodede string for server properties tuning file.
+  "producer_jks":
+    "default": ""
+    "type": "string"
+    "description": |-
+      Base 64 encodede string for producer keys as mentioned in filename.
+  "consumer_config":
+    "default": ""
+    "type": "string"
+    "description": |-
+      Base 64 encodede string for consumer properties tuning file.
+  "consumer_jks":
+    "default": ""
+    "type": "string"
+    "description": |-
+      Base 64 encodede string for consumer keys as mentioned in filename.
+  "streams":
+    "type": "int"
+    "default": !!int "3"
+    "description": |-
+      Specifies the number of consumer stream threads to create.
+  "whitelist":
+    "type": "string"
+    "default": ".*"
+    "description": |-
+      For a partial mirror, you can specify exactly one comma-separated list of
+      topics to include (--whitelist).
+      In general, these options accept Java regex patterns. For caveats, see the
+      note after this table. the topics needs to be mirrored.
+      A comma (',') is interpreted as the regex-choice symbol ('|') for convenience.
+      If you specify .*, MirrorMaker tries to fetch data from the system-level topic
+      __consumer-offsets and produce that data to the target cluster.
+  kafka_heap_opts:
+    default: "-Xmx8G -Xms8G"
+    type: string
+    description: |-
+      Kafka broker JVM heap options

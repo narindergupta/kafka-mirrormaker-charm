@@ -1,0 +1,18 @@
+includes:
+- 'layer:basic'
+- "layer:options"
+- 'layer:apt'
+- "layer:nagios"
+- 'interface:nrpe-external-master'
+- 'interface:local-monitors'
+options:
+  basic:
+    packages:
+      - python3
+      - default-jre-headless
+    include_system_packages: true
+  apt:
+    packages:
+      - kafka
+repo: https://github.com/narindergupta/kafka-mirrormaker-charm.git
+is: "kafka"

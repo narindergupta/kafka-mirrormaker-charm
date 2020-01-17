@@ -1,0 +1,29 @@
+name: kafka-mirrormaker
+summary: A distributed streaming platform
+maintainer: Narinder Gupta <narinder.gupta@canonical.com>
+description: |
+  This charm will run mirror-maker as a service on kafka platform.
+  It's intended for some internal projects and is not supported for general
+  community use.
+tags:
+  - distributed
+subordinate: false
+provides:
+  nrpe-external-master:
+    interface: nrpe-external-master
+    scope: container
+  local-monitors:
+    interface: local-monitors
+    scope: container
+min-juju-version: "2.4.0"
+resources:
+  consumerjks:
+    type: file
+    filename: consumer.jks
+    description: "One line description that is useful when operators need to push it."
+  producerjks:
+    type: file
+    filename: producer.jks
+    description: "One line description that is useful when operators need to push it."
+series:
+- bionic
