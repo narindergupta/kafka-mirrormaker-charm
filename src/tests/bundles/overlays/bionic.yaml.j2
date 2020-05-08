@@ -1,0 +1,26 @@
+applications:
+  zookeeper1:
+    charm:  cs:~narindergupta/zookeeper
+    options:
+      install_keys: "622CF918"
+      install_sources: "{{ OS_VIP00 }}"
+  kafka1:
+    charm:  cs:~narindergupta/kafka
+    options:
+      install_keys: "622CF918"
+      install_sources: "{{ OS_VIP00 }}"
+  zookeeper2:
+    charm:  cs:~narindergupta/zookeeper
+    options:
+      install_keys: "622CF918"
+      install_sources: "{{ OS_VIP00 }}"
+  kafka2:
+    charm:  cs:~narindergupta/kafka
+    options:
+      install_keys: "622CF918"
+      install_sources: "{{ OS_VIP00 }}"
+  kafka-mirrormaker:
+    charm:  cs:~narindergupta/kafka-mirrormaker
+    options:
+      install_keys: "622CF918"
+      install_sources: "{{ OS_VIP00 }}"

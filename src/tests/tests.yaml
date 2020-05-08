@@ -1,0 +1,9 @@
+charm_name: kafka-mirrormaker
+tests:
+  - tests.basic_deployment.BasicDeployment
+gate_bundles:
+  - bionic
+dev_bundles:
+  - bionic
+smoke_bundles:
+  - bionic

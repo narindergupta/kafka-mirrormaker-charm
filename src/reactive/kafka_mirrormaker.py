@@ -13,7 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from charms.layer.kafka_mirrormaker import kafka_mirrormaker
+from charms.layer.kafka_mirrormaker import kafkaMirrorMaker
 
 from charmhelpers.core import hookenv, unitdata
 
@@ -24,17 +24,16 @@ from charms.reactive.helpers import data_changed
 
 @hook('upgrade-charm')
 def upgrade_charm():
-    remove_state('kafka_mirrormaker.nrpe_helper.installed')
     remove_state('kafka_mirrormaker.started')
 
 
-@when(
-    'apt.installed.kafka',
-)
+@when('apt.installed.kafka')
 @when_not('kafka_mirrormaker.started')
 def configure_kafka_mirrormaker():
     hookenv.status_set('maintenance', 'setting up kafka mirrormaker')
-    kafkamirrormaker = kafka_mirrormaker()
+    kafkamirrormaker = kafkaMirrorMaker()
+    if kafkamirrormaker.is_running():
+        kafkamirrormaker.stop()
     kafkamirrormaker.start()
     set_state('kafka_mirrormaker.started')
     hookenv.status_set('active', 'ready')
@@ -43,12 +42,7 @@ def configure_kafka_mirrormaker():
     hookenv.application_version_set(kafka_mirrormaker_version)
 
 
-@when('config.changed', 'kafka_mirrormaker.ready')
+@when('config.changed', 'kafka_mirrormaker.started')
 def config_changed():
-    for k, v in hookenv.config().items():
-        if k.startswith('nagios') and data_changed('kafka_mirrormaker.config.{}'.format(k),
-                                                   v):
-            # Trigger a reconfig of nagios if relation established
-            remove_state('kafka_mirrormaker.nrpe_helper.registered')
     # Something must have changed if this hook fired, trigger reconfig
-    remove_state('kafka_mirrormaker.started')
+    configure_kafka_mirrormaker()

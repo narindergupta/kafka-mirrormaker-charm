@@ -35,9 +35,10 @@ KAFKA_APP = 'kafka'
 KAFKA_SERVICE = '{}.service'.format(KAFKA_APP)
 KAFKA_APP_DATA = '/etc/{}'.format(KAFKA_APP)
 KAFKA_SERVICE_CONF = '/lib/systemd/system/'
+KAFKA_BIN = '/usr/lib/kafka/bin/'
 
 
-class kafka_mirrormaker(object):
+class kafkaMirrorMaker(object):
     def install(self):
         '''
         Nothing to install as kafka charm will installs all utility
@@ -54,6 +55,7 @@ class kafka_mirrormaker(object):
         '''
         Starts the Kafka mirror rervice.
         '''
+        host.service('disable', KAFKA_SERVICE)
         config = hookenv.config()
         streams = config["streams"]
         whitelist = config["whitelist"]
@@ -63,7 +65,8 @@ class kafka_mirrormaker(object):
         if producer_res_path is False:
             producerjks = b64decode(config['producer_jks']).decode("utf-8")
             with open('/etc/kafka/producer_truststore.jks', 'w') as outfile:
-                json.dump(producerjks, outfile)
+                if producerjks:
+                    json.dump(producerjks, outfile)
         else:
             shutil.copy(producer_res_path, '/etc/kafka/producer_truststore.jks')
 
@@ -71,23 +74,36 @@ class kafka_mirrormaker(object):
         if consumer_res_path is False:
             consumerjks = b64decode(config['consumer_jks']).decode("utf-8")
             with open('/etc/kafka/consumer_truststore.jks', 'w') as outfile:
-                json.dump(consumerjks, outfile)
+                if consumerjks:
+                    json.dump(consumerjks, outfile)
         else:
             shutil.copy(consumer_res_path, '/etc/kafka/consumer_truststore.jks')
 
         with open('/etc/kafka/producerconfig-file', 'w') as outfile:
-            json.dump(producerconfig, outfile)
+            if producerconfig:
+                json.dump(producerconfig, outfile)
         with open('/etc/kafka/consumerconfig-file', 'w') as outfile:
-            json.dump(consumerconfig, outfile)
+            if consumerconfig:
+                json.dump(consumerconfig, outfile)
+
+        context={
+            'kafka_heap_opts': config.get('kafka_heap_opts', ''),
+        }
 
         render(
             source='broker.env',
             target=os.path.join(KAFKA_APP_DATA, 'broker.env'),
             owner='root',
             perms=0o644,
-            context={
-                'kafka_heap_opts': config.get('kafka_heap_opts', ''),
-            }
+            context=context
+        )
+
+        render(
+            source='kafka-server-start.sh',
+            target=os.path.join(KAFKA_BIN, 'kafka-server-start.sh'),
+            owner='root',
+            perms=0o755,
+            context=context
         )
 
         # mirror the topics if kafka is running
